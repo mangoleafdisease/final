@@ -3,6 +3,7 @@ import './App.css';
 import { Button, Card, Col, Image, Row } from "antd";
 import Webcam from "react-webcam";
 import { useState } from 'react';
+import { isMobile } from "react-device-detect";
 
 function App() {
 
@@ -40,7 +41,9 @@ function App() {
         opacity: "0.8",
       }}
     >
-      <Col xs={24}>
+      {
+        isMobile?
+        <Col xs={24}>
         <center>
           <Col xs={24} style={{ padding: 10, textAlign: "center" }}>
             <b style={{ fontSize: 35 }}>
@@ -56,7 +59,8 @@ function App() {
 
             <Card
               style={{
-
+                backgroundColor: "transparent",
+                borderColor: "transparent"
               }}
               cover={
                 predicting === false &&
@@ -113,6 +117,13 @@ function App() {
           </Col>
         </center>
       </Col>
+      :
+      <Col xs={24} style={{ marginTop: "10%" }}>
+        <center>
+        <b>⚠️ Only available on mobile web browser!</b>
+        </center>
+      </Col>
+      }
     </Row>
   );
 }
