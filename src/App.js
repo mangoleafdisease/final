@@ -51,7 +51,7 @@ function App() {
               Classification
             </b>
           </Col>
-          <Col xs={17}
+          <Col xs={24}
             style={{
               marginTop: "35%"
             }}
@@ -73,7 +73,7 @@ function App() {
                 >
                   {({ getScreenshot }) => (
                     <Button
-                      style={{ marginTop: 20 }}
+                      style={{ marginTop: 20, width: "72%" }}
                       onClick={() => {
                         const imageSrc = getScreenshot();
                         const file = dataURLtoFile(imageSrc, "file")
