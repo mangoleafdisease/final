@@ -79,7 +79,7 @@ function App() {
                         setpredicting(true)
                         setTimeout(() => {
                           setpredicting(false)
-                        }, 3000)
+                        }, 3000) 
                       }}
                     > 
                       Capture Mango Leaf
