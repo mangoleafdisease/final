@@ -58,7 +58,7 @@ function App() {
   return (
     <Row gutter={[24, 0]}
       style={{
-        width: "100%",
+        width: window.innerWidth,
         backgroundColor: "gray",
         height: window.innerHeight,
         backgroundRepeat: "no-repeat",
@@ -66,6 +66,7 @@ function App() {
         backgroundPosition: "center",
         backgroundImage: "url('https://treejourney.com/wp-content/uploads/2022/01/15129582_l-1024x683.jpg')",
         opacity: "0.8",
+        padding: 0, margin: 0
       }}
     >
       {
@@ -80,7 +81,7 @@ function App() {
               </Col>
               <Col xs={22}
                 style={{
-                  marginTop: "15%"
+                  marginTop: "12%"
                 }}
               >
 
@@ -100,7 +101,7 @@ function App() {
                     >
                       {({ getScreenshot }) => (
                         <Button
-                          style={{ marginTop: 20, width: "72%",  }}
+                          style={{ marginTop: 20, width: "72%", }}
                           danger
                           onClick={() => {
                             const imageSrc = getScreenshot();
@@ -117,6 +118,15 @@ function App() {
                   }
                   footer={null}
                 >
+                  {
+                    predicting === false &&
+                    <Col>
+                    <b style={{ color: "white" }}>OR </b><br/><br/>
+                    <Button>
+                      Upload Image
+                    </Button>
+                    </Col>
+                  }
                   {
                     predicting &&
                     <Col xs={24} style={{}}>
@@ -138,20 +148,27 @@ function App() {
                             </Col>
                             :
                             <div>
-                              <Col xs={24} style={{ marginTop: 20, fontSize: 15, color: "white", backgroundColor: "#32CD32", borderRadius: 10 }}>
-                              Disease Detected:<b> {result.class}</b> <br/>
-                              Confidence: <b>{result.confidence * 100}%</b>
-                            </Col>
-                            <Col xs={24} style={{ marginTop: 20 }}>
-                              <Button type="primary"
-                              onClick={()=>{
-                                setresult(null)
-                                setpredicting(false)
-                              }}
-                              >
-                                Try Another
-                              </Button>
-                            </Col>
+                              <Col xs={24} style={{ marginTop: 20, fontSize: 15, color: "white", backgroundColor: result.unable===true? "red" : "#32CD32", borderRadius: 10 }}>
+                                {
+                                  result.unable===true?
+                                    <b>Unable to predict image, please try again!</b>
+                                    :
+                                    <>
+                                      Disease Detected:<b> {result.class}</b> <br />
+                                      Confidence: <b>{(result.confidence * 100).toFixed(2)}%</b>
+                                    </>
+                                }
+                              </Col>
+                              <Col xs={24} style={{ marginTop: 20 }}>
+                                <Button type="primary"
+                                  onClick={() => {
+                                    setresult(null)
+                                    setpredicting(false)
+                                  }}
+                                >
+                                  Try Another
+                                </Button>
+                              </Col>
                             </div>
                         }
                       </center>
