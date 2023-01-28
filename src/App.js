@@ -4,6 +4,7 @@ import { Button, Card, Col, Image, Row } from "antd";
 import Webcam from "react-webcam";
 import { useState } from 'react';
 import { isMobile } from "react-device-detect";
+import axios from "axios";
 
 function App() {
 
@@ -14,6 +15,7 @@ function App() {
   };
   const [predicting, setpredicting] = useState(false)
   const [imgSrc, setimgSrc] = useState("")
+  const [result, setresult] = useState(null)
 
   const dataURLtoFile = (dataurl, filename) => {
     var arr = dataurl.split(','),
@@ -28,6 +30,31 @@ function App() {
     return new File([u8arr], filename, { type: mime });
   }
 
+  const PredictLeaf = async (image) => {
+    try {
+      const file = dataURLtoFile(image, "file")
+      console.log(file)
+      var formData = new FormData();
+      formData.append("file", file);
+      await axios.post('http://localhost:8000/predict', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then(res => {
+        console.log(res.data)
+        setresult(res.data)
+        //setpredicting(false)
+      }).catch(err => {
+        console.log(err.message)
+        setresult(null)
+        setpredicting(false)
+      })
+    } catch (err) {
+      console.log(err.message)
+      setresult(null)
+      setpredicting(false)
+    }
+  }
   return (
     <Row gutter={[24, 0]}
       style={{
@@ -42,87 +69,104 @@ function App() {
       }}
     >
       {
-        isMobile?
-        <Col xs={24}>
-        <center>
-          <Col xs={24} style={{ padding: 10, textAlign: "center" }}>
-            <b style={{ fontSize: 35 }}>
-              Mango Disease <br />
-              Classification
-            </b>
-          </Col>
-          <Col xs={24}
-            style={{
-              marginTop: "35%"
-            }}
-          >
+        isMobile ?
+          <Col xs={24}>
+            <center>
+              <Col xs={24} style={{ padding: 10, textAlign: "center" }}>
+                <b style={{ fontSize: 35 }}>
+                  Mango Disease <br />
+                  Classification
+                </b>
+              </Col>
+              <Col xs={22}
+                style={{
+                  marginTop: "15%"
+                }}
+              >
 
-            <Card
-              style={{
-                backgroundColor: "transparent",
-                borderColor: "transparent"
-              }}
-              cover={
-                predicting === false &&
-                <Webcam
-                  audio={false}
-                  height={256}
-                  width={256}
-                  screenshotFormat="image/jpeg"
-                  videoConstraints={videoConstraints}
-                >
-                  {({ getScreenshot }) => (
-                    <Button
-                      style={{ marginTop: 20, width: "72%" }}
-                      onClick={() => {
-                        const imageSrc = getScreenshot();
-                        const file = dataURLtoFile(imageSrc, "file")
-                        console.log(file)
-
-                        setimgSrc(imageSrc)
-                        setpredicting(true)
-                        setTimeout(() => {
-                          setpredicting(false)
-                        }, 3000) 
-                      }}
-                    > 
-                      Capture Mango Leaf
-                    </Button>
-                  )}
-                </Webcam>
-              }
-              footer={null}
-            >
-              {
-                predicting &&
-                <Col xs={24} style={{}}>
-                  <center>
-                    <Image
-                      src={imgSrc}
-                      width={"auto"}
+                <Card
+                  style={{
+                    backgroundColor: "transparent",
+                    borderColor: "transparent"
+                  }}
+                  cover={
+                    predicting === false &&
+                    <Webcam
+                      audio={false}
                       height={"auto"}
-                      preview={false}
-                    />
-                    <Col style={{ paddingTop: 10 }}>
-                      <Button loading={true} variant={"ghost"}
-                        style={{ width: "100%" }}
-                      >
-                        Predicting . . .
-                      </Button>
+                      width={"auto"}
+                      screenshotFormat="image/jpeg"
+                      videoConstraints={videoConstraints}
+                    >
+                      {({ getScreenshot }) => (
+                        <Button
+                          style={{ marginTop: 20, width: "72%",  }}
+                          danger
+                          onClick={() => {
+                            const imageSrc = getScreenshot();
+
+                            setimgSrc(imageSrc)
+                            setpredicting(true)
+                            PredictLeaf(imageSrc)
+                          }}
+                        >
+                          Capture Mango Leaf
+                        </Button>
+                      )}
+                    </Webcam>
+                  }
+                  footer={null}
+                >
+                  {
+                    predicting &&
+                    <Col xs={24} style={{}}>
+                      <center>
+                        <Image
+                          src={imgSrc}
+                          width={"auto"}
+                          height={"auto"}
+                          preview={false}
+                        />
+                        {
+                          result === null ?
+                            <Col style={{ paddingTop: 10 }}>
+                              <Button loading={true} variant={"ghost"}
+                                style={{ width: "100%" }}
+                              >
+                                Predicting . . .
+                              </Button>
+                            </Col>
+                            :
+                            <div>
+                              <Col xs={24} style={{ marginTop: 20, fontSize: 15, color: "white", backgroundColor: "#32CD32", borderRadius: 10 }}>
+                              Disease Detected:<b> {result.class}</b> <br/>
+                              Confidence: <b>{result.confidence * 100}%</b>
+                            </Col>
+                            <Col xs={24} style={{ marginTop: 20 }}>
+                              <Button type="primary"
+                              onClick={()=>{
+                                setresult(null)
+                                setpredicting(false)
+                              }}
+                              >
+                                Try Another
+                              </Button>
+                            </Col>
+                            </div>
+                        }
+                      </center>
                     </Col>
-                  </center>
-                </Col>
-              }
-            </Card>
+                  }
+                </Card>
+              </Col>
+            </center>
           </Col>
-        </center>
-      </Col>
-      :
-      <Col xs={24} style={{ marginTop: "10%" }}>
-        <center>
-        <b>⚠️ Only available on mobile web browser!</b>
-        </center>
-      </Col>
+          :
+          <Col xs={24} style={{ marginTop: "10%" }}>
+            <center>
+              <b>⚠️ Only available on mobile web browser!</b>
+            </center>
+          </Col>
       }
     </Row>
   );
