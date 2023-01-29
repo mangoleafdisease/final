@@ -6,6 +6,8 @@ import { useState } from 'react';
 import { isMobile } from "react-device-detect";
 import axios from "axios";
 
+const url = "http://192.168.254.102:8000/predict"
+
 function App() {
 
   const videoConstraints = {
@@ -36,7 +38,7 @@ function App() {
       console.log(file)
       var formData = new FormData();
       formData.append("file", file);
-      await axios.post('http://localhost:8000/predict', formData, {
+      await axios.post(url, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
