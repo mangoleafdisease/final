@@ -6,7 +6,8 @@ import { useState } from 'react';
 import { isMobile } from "react-device-detect";
 import axios from "axios";
 
-const url = "http://192.168.254.102:8000/predict"
+//
+const url = "http://localhost:8000/predict"
 
 function App() {
 
@@ -183,7 +184,7 @@ function App() {
           :
           <Col xs={24} style={{ marginTop: "10%" }}>
             <center>
-              <b>⚠️ Only available on mobile web browser!</b>
+              <b>⚠️ Test!</b>
             </center>
           </Col>
       }
