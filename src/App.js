@@ -184,7 +184,7 @@ function App() {
           :
           <Col xs={24} style={{ marginTop: "10%" }}>
             <center>
-              <b>⚠️ Test!</b>
+              <b>⚠️ Only available on mobile web browser!</b>
             </center>
           </Col>
       }
