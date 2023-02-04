@@ -82,8 +82,9 @@ function App() {
           getBase64(e.file.originFileObj, (url) => {
             setimgSrc(url);
           });
-          console.log("to predict")
-          PredictLeaf(e.file.originFileObj)
+          
+          setpredicting(true)
+          PredictLeaf(e.file)
           break;
 
         default:
