@@ -1,13 +1,14 @@
 /* eslint-disable */
 import './App.css';
-import { Button, Card, Col, Image, Row } from "antd";
+import { Button, Card, Col, Image, Row, Upload } from "antd";
 import Webcam from "react-webcam";
 import { useState } from 'react';
 import { isMobile } from "react-device-detect";
 import axios from "axios";
+import { UploadOutlined } from '@ant-design/icons';
 
-//
-const url = "http://localhost:8000/predict"
+
+const url = "https://mango-disease-api.herokuapp.com/predict"
 
 function App() {
 
@@ -33,10 +34,9 @@ function App() {
     return new File([u8arr], filename, { type: mime });
   }
 
-  const PredictLeaf = async (image) => {
+  const PredictLeaf = async (file) => {
     try {
-      const file = dataURLtoFile(image, "file")
-      console.log(file)
+
       var formData = new FormData();
       formData.append("file", file);
       await axios.post(url, formData, {
@@ -58,6 +58,45 @@ function App() {
       setpredicting(false)
     }
   }
+
+  const dummyRequest = ({ file, onSuccess }) => {
+    setTimeout(() => {
+      onSuccess("ok");
+    }, 0);
+  };
+
+  const getBase64 = (img, callback) => {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result));
+    reader.readAsDataURL(img);
+  };
+
+  const onChange = e => {
+    if (e.file.type.includes("image")) {
+      switch (e.file.status) {
+        case "uploading":
+          console.log("uploading")
+          break;
+        case "done":
+          console.log(e.file)
+          getBase64(e.file.originFileObj, (url) => {
+            setimgSrc(url);
+          });
+          console.log("to predict")
+          PredictLeaf(e.file.originFileObj)
+          break;
+
+        default:
+          console.log("def")
+      }
+    } else {
+      notification.info({
+        message: "Select an image file only!"
+      })
+    }
+
+  };
+
   return (
     <Row gutter={[24, 0]}
       style={{
@@ -111,7 +150,9 @@ function App() {
 
                             setimgSrc(imageSrc)
                             setpredicting(true)
-                            PredictLeaf(imageSrc)
+                            const file = dataURLtoFile(imageSrc, "file")
+                            console.log(file)
+                            PredictLeaf(file)
                           }}
                         >
                           Capture Mango Leaf
@@ -124,10 +165,18 @@ function App() {
                   {
                     predicting === false &&
                     <Col>
-                    <b style={{ color: "white" }}>OR </b><br/><br/>
-                    <Button>
-                      Upload Image
-                    </Button>
+                      <b style={{ color: "white" }}>OR </b><br /><br />
+                      <Upload
+                            //fileList={selectedFileList}
+                            customRequest={dummyRequest}
+                            onChange={e => {
+                              console.log(e)
+                              onChange(e)
+                            }}
+                          >
+
+                        <Button icon={<UploadOutlined />}>Upload an Image</Button>
+                      </Upload>
                     </Col>
                   }
                   {
@@ -151,9 +200,9 @@ function App() {
                             </Col>
                             :
                             <div>
-                              <Col xs={24} style={{ marginTop: 20, fontSize: 15, color: "white", backgroundColor: result.unable===true? "red" : "#32CD32", borderRadius: 10 }}>
+                              <Col xs={24} style={{ marginTop: 20, fontSize: 15, color: "white", backgroundColor: result.unable === true ? "red" : "#32CD32", borderRadius: 10 }}>
                                 {
-                                  result.unable===true?
+                                  result.unable === true ?
                                     <b>Unable to predict image, please try again!</b>
                                     :
                                     <>
