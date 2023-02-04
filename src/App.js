@@ -84,7 +84,7 @@ function App() {
           });
           
           setpredicting(true)
-          PredictLeaf(e.file)
+          PredictLeaf(e.file.originFileObj)
           break;
 
         default:
