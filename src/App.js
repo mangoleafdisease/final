@@ -7,7 +7,6 @@ import { isMobile } from "react-device-detect";
 import axios from "axios";
 import { UploadOutlined } from '@ant-design/icons';
 
-
 const url = "https://mango-disease-api.herokuapp.com/predict"
 
 function App() {
