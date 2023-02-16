@@ -9,7 +9,6 @@ import { UploadOutlined } from '@ant-design/icons';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 
 
-
 const url = "https://mango-disease-api.herokuapp.com/predict"
 
 function App() {
