@@ -6,11 +6,15 @@ import { useState } from 'react';
 import { isMobile } from "react-device-detect";
 import axios from "axios";
 import { UploadOutlined } from '@ant-design/icons';
+import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
+
 
 
 const url = "https://mango-disease-api.herokuapp.com/predict"
 
 function App() {
+
+  
 
   const videoConstraints = {
     width: "auto",
@@ -107,7 +111,7 @@ function App() {
         backgroundRepeat: "no-repeat",
         backgroundSize: "100% 100%",
         backgroundPosition: "center",
-        backgroundImage: "url('https://treejourney.com/wp-content/uploads/2022/01/15129582_l-1024x683.jpg')",
+        backgroundImage: "url('https://i.ibb.co/N12WsfX/istockphoto-878922558-612x612.jpg')",
         opacity: "0.8",
         padding: 0, margin: 0
       }}
@@ -117,9 +121,9 @@ function App() {
           <Col xs={24}>
             <center>
               <Col xs={24} style={{ padding: 10, textAlign: "center" }}>
-                <b style={{ fontSize: 35 }}>
-                  Mango Disease <br />
-                  Classification
+                <b style={{ fontSize: 30 }} class="text-success bg-white">
+                  Mango Leaf Disease <br />
+                  Detection
                 </b>
               </Col>
               <Col xs={22}
@@ -145,7 +149,7 @@ function App() {
                       {({ getScreenshot }) => (
                         <Button
                           style={{ marginTop: 20, width: "72%", }}
-                          danger
+                          
                           onClick={() => {
                             const imageSrc = getScreenshot();
 
@@ -154,10 +158,13 @@ function App() {
                             const file = dataURLtoFile(imageSrc, "file")
                             console.log(file)
                             PredictLeaf(file)
+                            
                           }}
+                          className='btn btn-success' 
                         >
-                          Capture Mango Leaf
+                        Capture Mango Leaf
                         </Button>
+
                       )}
                     </Webcam>
                   }
@@ -166,7 +173,7 @@ function App() {
                   {
                     predicting === false &&
                     <Col>
-                      <b style={{ color: "white" }}>OR </b><br /><br />
+                      <b style={{ color: "black" }}>OR </b><br /><br />
                       <Upload
                             //fileList={selectedFileList}
                             customRequest={dummyRequest}
@@ -176,7 +183,7 @@ function App() {
                             }}
                           >
 
-                        <Button icon={<UploadOutlined />}>Upload an Image</Button>
+                        <Button icon={<UploadOutlined />} className='btn btn-success'>Upload an Image</Button>
                       </Upload>
                     </Col>
                   }
