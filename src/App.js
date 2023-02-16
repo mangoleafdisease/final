@@ -120,7 +120,7 @@ function App() {
           <Col xs={24}>
             <center>
               <Col xs={24} style={{ padding: 10, textAlign: "center" }}>
-                <b style={{ fontSize: 30 }} class="text-success bg-white">
+                <b style={{ fontSize: 30 }} className="text-success bg-white">
                   Mango Leaf Disease <br />
                   Detection
                 </b>
