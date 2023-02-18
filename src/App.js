@@ -1,13 +1,17 @@
 /* eslint-disable */
 import './App.css';
-import { Button, Card, Col, Image, Row, Upload } from "antd";
+import { Button, Card, Col, Image, Modal, Row, Upload } from "antd";
 import Webcam from "react-webcam";
 import { useState } from 'react';
 import { isMobile } from "react-device-detect";
 import axios from "axios";
 import { UploadOutlined } from '@ant-design/icons';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
-
+import Anthracnose from './Remedies/Anthracnose';
+import BacterialCanker from './Remedies/BacterialCanker';
+import GailMidge from './Remedies/GailMidge';
+import PowderyMildew from './Remedies/PowderyMildew';
+import SootyMould from './Remedies/SootyMould';
 
 const url = "https://mango-disease-api.herokuapp.com/predict"
 
@@ -16,11 +20,12 @@ function App() {
   const videoConstraints = {
     width: "auto",
     height: "auto",
-    facingMode: "user"
+    facingMode: "environment"
   };
   const [predicting, setpredicting] = useState(false)
   const [imgSrc, setimgSrc] = useState("")
   const [result, setresult] = useState(null)
+  const [show, setshow] = useState(false)
 
   const dataURLtoFile = (dataurl, filename) => {
     var arr = dataurl.split(','),
@@ -37,7 +42,7 @@ function App() {
 
   const PredictLeaf = async (file) => {
     try {
-      
+
       var formData = new FormData();
       formData.append("file", file);
       await axios.post(url, formData, {
@@ -84,7 +89,7 @@ function App() {
           getBase64(e.file.originFileObj, (url) => {
             setimgSrc(url);
           });
-          
+
           setpredicting(true)
           PredictLeaf(e.file.originFileObj)
           break;
@@ -100,6 +105,23 @@ function App() {
 
   };
 
+  function Remedies(disease){
+    console.log(disease)
+    switch (disease) {
+      case "Anthracnose":
+        return <Anthracnose />
+      case "Bacterial Canker":
+        return <BacterialCanker />
+      case "Gail Midge":
+        return <GailMidge />
+      case "Powdery Mildew":
+        return <PowderyMildew />
+      case "Sooty Mould":
+        return <SootyMould/>
+      default:
+        return <>Mango Leaf is Healthy</>
+    }
+  }
   return (
     <Row gutter={[24, 0]}
       style={{
@@ -117,6 +139,22 @@ function App() {
       {
         isMobile ?
           <Col xs={24}>
+            <Modal
+              open={show}
+              footer={null}
+              title={result===null? null : result.class}
+              onCancel={() => { setshow(false) }}
+              
+            >
+            <Col  style={{ overflow: "auto", height: window.innerHeight * .7 }}>
+              {
+                result!==null?
+                  Remedies(result.class)
+                  :
+                <></>
+              }
+            </Col>
+            </Modal>
             <center>
               <Col xs={24} style={{ padding: 10, textAlign: "center" }}>
                 <b style={{ fontSize: 30 }} className="text-success bg-white">
@@ -147,7 +185,7 @@ function App() {
                       {({ getScreenshot }) => (
                         <Button
                           style={{ marginTop: 20, width: "72%", }}
-                          
+
                           onClick={() => {
                             const imageSrc = getScreenshot();
 
@@ -156,11 +194,11 @@ function App() {
                             const file = dataURLtoFile(imageSrc, "file")
                             console.log(file)
                             PredictLeaf(file)
-                            
+
                           }}
-                          className='btn btn-success' 
+                          className='btn btn-success'
                         >
-                        Capture Mango Leaf
+                          Capture Mango Leaf
                         </Button>
 
                       )}
@@ -173,13 +211,13 @@ function App() {
                     <Col>
                       <b style={{ color: "black" }}>OR </b><br /><br />
                       <Upload
-                            //fileList={selectedFileList}
-                            customRequest={dummyRequest}
-                            onChange={e => {
-                              console.log(e)
-                              onChange(e)
-                            }}
-                          >
+                        //fileList={selectedFileList}
+                        customRequest={dummyRequest}
+                        onChange={e => {
+                          console.log(e)
+                          onChange(e)
+                        }}
+                      >
 
                         <Button icon={<UploadOutlined />} className='btn btn-success'>Upload an Image</Button>
                       </Upload>
@@ -227,6 +265,15 @@ function App() {
                                   Try Another
                                 </Button>
                               </Col>
+                              <Col xs={24} style={{ marginTop: 20 }}>
+                                <Button danger ghost style={{ color: "white" }}
+                                  onClick={() => {
+                                    setshow(true)
+                                  }}
+                                >
+                                 <b>Show Remedies</b>
+                                </Button>
+                              </Col>
                             </div>
                         }
                       </center>
@@ -235,6 +282,7 @@ function App() {
                 </Card>
               </Col>
             </center>
+
           </Col>
           :
           <Col xs={24} style={{ marginTop: "10%" }}>
