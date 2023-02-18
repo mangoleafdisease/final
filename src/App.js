@@ -13,12 +13,10 @@ const url = "https://mango-disease-api.herokuapp.com/predict"
 
 function App() {
 
-  
-
   const videoConstraints = {
     width: "auto",
     height: "auto",
-    facingMode: "environment"
+    facingMode: "user"
   };
   const [predicting, setpredicting] = useState(false)
   const [imgSrc, setimgSrc] = useState("")
@@ -39,7 +37,7 @@ function App() {
 
   const PredictLeaf = async (file) => {
     try {
-
+      
       var formData = new FormData();
       formData.append("file", file);
       await axios.post(url, formData, {
@@ -49,6 +47,7 @@ function App() {
       }).then(res => {
         console.log(res.data)
         setresult(res.data)
+        //"Anthracnose", "Bacterial Canker", "Gail Midge", "Healthy", "Powdery Mildew", "Sooty Mould" 
         //setpredicting(false)
       }).catch(err => {
         console.log(err.message)
